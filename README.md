@@ -29,9 +29,9 @@ all.strings file with all translations and a file with new translations in all l
 
 ## Add to your project or update strings
 
-1. Copy the generated Base.strings to the 'Base.lproj' folder
+1. Copy the generated en.strings to the 'en.lproj' folder
 2. Rename 'Base.strings' to 'Localizable.strings' (If file exist add Base.strings new lines to your previous file)
-3. Repeat 5 and 6 for every language folder (e.g. 'en.lproj')
+3. Repeat 5 and 6 for every language folder (e.g. 'es.lproj')
 4. Translate
 5. Add all Localizable.strings files to your "Copy bundle resources" under build phases
 6. lean build (Shift + Cmd + K) and run (Cmd + R)
