@@ -47,46 +47,30 @@ func stringsFromSwiftFiles() {
                 //check .localize()
                 if name.contains("\".localize") {
                     // this part gets the actual string that needs translating
-                    var parts = name.components(separatedBy: ".")
-                    _ = parts.popLast()
-                    var string = parts.joined(separator: ".")
-                    string = string.trimmingCharacters(in: CharacterSet(["\""]))
-                    
-                    // now extract the comment if possible
-                    var comment: String = ""
-                    if let argument = path.last() , argument["key.name"] != nil {
-                        if let argumentName = argument["key.name"] as? String , argumentName == "comment" {
+                    var parts = name.components(separatedBy: "\".localize")
+                    for i in 0...parts.count - 2 {
+                        let part = parts[i]
+                        if let str = part.components(separatedBy: "\"").last {
+                            let string = str
+                            let comment = ""
                             
-                            if let argumentBodyOffset = argument["key.bodyoffset"] as? NSNumber ,
-                                let argumentBodyLength = argument["key.bodylength"] as? NSNumber {
-                                
-                                if contents == nil {
-                                    contents = file.contents()
+                            if string.count > 0 {
+                                var translation = Translation(comment: comment, files: [file.name])
+                                if let storedTranslation = translations[string] {
+                                    var files = storedTranslation.files
+                                    files.append(file.name)
+                                    translation.files = files
                                 }
-                                
-                                if let contents = contents {
-                                    comment = contents.substring(
-                                        with: (argumentBodyOffset.intValue)
-                                            ..< (argumentBodyOffset.intValue + argumentBodyLength.intValue)
-                                    )
-                                    
-                                    comment = comment.trimmingCharacters(in: CharacterSet(["\""]))
-                                }
+                                translations[string] = translation
                             }
                         }
-                    }
-                    if string.count > 0 {
-                        var translation = Translation(comment: comment, files: [file.name])
-                        if let storedTranslation = translations[string] {
-                            var files = storedTranslation.files
-                            files.append(file.name)
-                            translation.files = files
-                        }
-                        translations[string] = translation
                     }
                 } else if name.contains(".locText") ||
                     name.contains(".locTitle") ||
                     name.contains(".locPlaceholder") ||
+                    name.contains(".styledLocText") ||
+                    name.contains(".styledLocTitle") ||
+                    name.contains(".styledLocPlaceholder") ||
                     name.contains("NSLocalizedString") {
                     var string = ""
                     var stringOffset = -1
